@@ -8,7 +8,7 @@ import settings
 
 
 def get_weather_data(location: str) -> dict:
-    api_url = settings.API_GET_REQUEST_WEATHER_IN_CITY.format(location=location, api_key=settings.API_KEY)
+    api_url = settings.API_GET_REQUEST_CITY_WEATHER.format(location=location, api_key=settings.API_KEY)
     try:
         response = requests.get(api_url)
         response.raise_for_status()
@@ -105,6 +105,10 @@ def delete_request_history():
 
 
 def main():
+
+    a = [1,3, 4]
+    b = 4+ 4
+
     print("Варианты действий в приложении: 1 - Погода в моем местоположении, 2 - Погода в городе,"
           " 3 - История запросов, 4 - удаление всех запросов из истории, 5 - Выход")
     while True:
