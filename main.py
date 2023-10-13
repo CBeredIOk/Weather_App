@@ -69,15 +69,26 @@ def print_data_weather(weather_data_to_print: dict[str, str]):
     Returns:
         None
     """
-    timestamp = float(weather_data_to_print['dt'])
-    timezone = datetime.timezone(datetime.timedelta(seconds=float(weather_data_to_print['timezone'])))
-    dt_object = datetime.datetime.fromtimestamp(timestamp, timezone)
-    print(f'\nТекущее время: {dt_object}')
+    print(f'\nТекущее время: {make_datetime_object(weather_data_to_print["dt"], weather_data_to_print["timezone"])}')
     print(f'Название города: {weather_data_to_print["city"]}')
     print(f'Погодные условия: {weather_data_to_print["weather"]}')
     print(f'Текущая температура: {weather_data_to_print["temperature"]} градусов по цельсию')
     print(f'Ощущается как: {weather_data_to_print["feels_like"]} градусов по цельсию')
     print(f'Скорость ветра: {weather_data_to_print["wind_speed"]} м/с\n')
+
+
+def make_datetime_object(request_time: str, timedelta_seconds: str) -> datetime:
+    """
+    Эта функция переводит время из timestep в формат datetime и показывает разницу по UTC
+
+    Args:
+        (request_time: str): время в городе при запросе
+        (timedelta_seconds: str): показывает разницу времени в городе от 0 часового пояса
+    Returns:
+        datetime: дата и время в городе при http запросе
+    """
+    timezone = datetime.timezone(datetime.timedelta(seconds=float(timedelta_seconds)))
+    return datetime.datetime.fromtimestamp(float(request_time), timezone)
 
 
 def remembering_data_weather(weather_data_to_history: dict[str, str]):
