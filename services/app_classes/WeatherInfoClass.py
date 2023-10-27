@@ -20,7 +20,6 @@ class WeatherInformation:
         wind_speed (int): Скорость ветра в м/с.
     """
 
-    # date: str
     date: datetime.datetime
     city_name: str
     weather_conditions: str
