@@ -1,13 +1,11 @@
 
-from Weather_App import (
-    MenuAction,
-    get_weather_data_in_my_location,
-    get_weather_data_in_city,
-    delete_request_history,
-    print_data_weather_request,
-    interface_text,
-    main_menu_error_handler
-)
+from files import interface_text
+from modules.app_errors import main_menu_error_handler
+from app_classes.action_menu_class import MenuAction
+from modules.get_api_weather_data import get_weather_data_in_my_location
+from modules.get_api_weather_data import get_weather_data_in_city
+from modules.storage_weather_data import delete_request_history
+from modules.history_weather_data_request import print_data_weather_request
 
 
 @main_menu_error_handler

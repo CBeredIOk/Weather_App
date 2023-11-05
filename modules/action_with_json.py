@@ -4,7 +4,7 @@ import json
 import datetime
 from typing import Any
 
-from Weather_App.files import settings
+from files import settings
 from .app_errors import error_handler
 from .app_errors import OpenStorageError, SaveStorageError
 
@@ -53,9 +53,8 @@ def find_storage_path() -> str:
     """
     current_dir = os.path.dirname(__file__)
     parent_dir = os.path.dirname(current_dir)
-    grandparent_dir = os.path.dirname(parent_dir)
 
-    json_file_path = os.path.join(grandparent_dir, settings.STORAGE_FOLDER, settings.STORAGE_FILE_NAME)
+    json_file_path = os.path.join(parent_dir, settings.STORAGE_FOLDER, settings.STORAGE_FILE_NAME)
     return json_file_path
 
 

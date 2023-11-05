@@ -3,7 +3,7 @@ import dataclasses
 import datetime
 from typing import Any
 
-from Weather_App.files import interface_text
+from files import interface_text
 
 
 @dataclasses.dataclass

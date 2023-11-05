@@ -1,10 +1,10 @@
 
 from typing import Any
 
-from Weather_App.files import interface_text
 from .app_errors import error_handler
-from Weather_App.services.app_classes.WeatherInfoClass import WeatherInformation
 from .action_with_json import read_all_data_from_storage
+from files import interface_text
+from app_classes.weather_info_class import WeatherInformation
 
 
 @error_handler

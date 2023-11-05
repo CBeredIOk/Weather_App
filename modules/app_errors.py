@@ -1,5 +1,5 @@
 
-from Weather_App.files import interface_text
+from files import interface_text
 
 
 class ApiRequestError(Exception):

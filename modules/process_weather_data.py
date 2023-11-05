@@ -2,7 +2,7 @@
 import datetime
 from typing import Any
 
-from Weather_App.services.app_classes.WeatherInfoClass import WeatherInformation
+from app_classes.weather_info_class import WeatherInformation
 from .storage_weather_data import remembering_data_weather
 
 
