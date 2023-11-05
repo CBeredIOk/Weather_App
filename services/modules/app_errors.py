@@ -1,5 +1,5 @@
 
-from files import interface_text
+from services.files import interface_text
 
 
 class ApiRequestError(Exception):
@@ -57,6 +57,8 @@ def main_menu_error_handler(func):
                 return func(*args, **kwargs)
             except ValueError:
                 print(interface_text.TypeMenuError_TEXT)
+            except TimeoutError:
+                print(interface_text.TimeOutError_TEXT)
             except Exception:
                 print(interface_text.ExceptionError_TEXT)
     return wrapper

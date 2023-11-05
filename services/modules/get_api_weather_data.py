@@ -3,11 +3,11 @@ import geocoder
 import requests
 from http import HTTPStatus
 
-from files import settings
-from files import interface_text
-from .app_errors import error_handler
 from .process_weather_data import processing_weather_data
+from .app_errors import error_handler
 from .app_errors import (ApiRequestError, MissCityError, LostConnectionError)
+
+from services.files import settings, interface_text
 
 
 def get_weather_data_in_my_location() -> None:

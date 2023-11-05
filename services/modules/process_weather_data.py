@@ -2,8 +2,9 @@
 import datetime
 from typing import Any
 
-from app_classes.weather_info_class import WeatherInformation
 from .storage_weather_data import remembering_data_weather
+
+from services.app_classes.weather_info_class import WeatherInformation
 
 
 def processing_weather_data(weather_data: dict[str, str]) -> None:

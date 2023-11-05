@@ -3,7 +3,7 @@ import dataclasses
 import datetime
 from typing import Any
 
-from files import interface_text
+from services.files import interface_text
 
 
 @dataclasses.dataclass

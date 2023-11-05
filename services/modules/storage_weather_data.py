@@ -1,9 +1,10 @@
 
-from files import interface_text
 from .app_errors import error_handler
-from app_classes.weather_info_class import WeatherInformation
 from .action_with_json import write_new_data_to_storage
 from .action_with_json import read_all_data_from_storage
+
+from services.files import interface_text
+from services.app_classes.weather_info_class import WeatherInformation
 
 
 @error_handler
