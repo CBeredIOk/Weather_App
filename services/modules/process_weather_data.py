@@ -2,12 +2,13 @@
 import datetime
 from typing import Any
 
+from .app_errors import error_handler
 from .storage_weather_data import remembering_data_weather
 
-from services.app_classes.weather_info_class import WeatherInformation
+from services.app_classes.weather_info import WeatherInformation
 
 
-def processing_weather_data(weather_data: dict[str, str]) -> None:
+def processing_weather_data(weather_data: Any) -> WeatherInformation:
     """
     Эта функция обрабатывает полученную информацию
 
@@ -16,45 +17,47 @@ def processing_weather_data(weather_data: dict[str, str]) -> None:
     отправляет информацию на сохранение и производит её вывод.
 
     Args:
-        (weather_data: dict[str, str]): Словарь с информацией о погоде в городе.
+        (weather_data: Any): Словарь с информацией о погоде в городе.
     Returns:
-        None
+        WeatherInformation: преобразованная информация о погоде в виде класса
     """
-    weather_data_with_parsing = parse_weather_data(weather_data)
-    weather_data_class = WeatherInformation(**weather_data_with_parsing)
-    remembering_data_weather(weather_data_class)
-    print(weather_data_class)
+    processed_weather_data = parse_weather_data(weather_data)
+    remembering_data_weather(processed_weather_data)
+    return processed_weather_data
 
 
-def parse_weather_data(weather_data: Any) -> dict[str, Any]:
+def parse_weather_data(weather_data: Any) -> WeatherInformation:
     """
     Эта функция парсит данные и переводит их в нужный формат
 
     Args:
         (weather_data: Any): информация о погоде от api запроса
     Returns:
-        dict[str, Any]: преобразованная информация в виде словаря
+        WeatherInformation: преобразованная информация о погоде в виде класса
     """
-    weather_data_dict = {
-        'date': make_datetime_object(weather_data["dt"], weather_data["timezone"]),
+    date_request = make_datetime_object(weather_data["dt"], weather_data["timezone"])
+    weather_parsing_data = {
+        'date': date_request,
         'city_name': weather_data['name'],
         'weather_conditions': weather_data['weather'][0]['description'],
         'temperature': int(weather_data['main']['temp']),
         'temperature_feels_like': int(weather_data['main']['feels_like']),
         'wind_speed': int(weather_data['wind']['speed'])
     }
-    return weather_data_dict
+    weather_information = WeatherInformation(**weather_parsing_data)
+    return weather_information
 
 
-def make_datetime_object(request_time: str, timedelta_seconds: str) -> datetime.datetime:
+@error_handler
+def make_datetime_object(request_time: str, offset_from_utc: str) -> datetime.datetime:
     """
     Эта функция переводит время из timestep в формат datetime и показывает разницу по UTC
 
     Args:
         (request_time: str): время в городе при запросе
-        (timedelta_seconds: str): показывает разницу времени в городе от 0 часового пояса
+        (offset_from_utc: str): показывает разницу времени в городе от utc
     Returns:
         datetime: дата и время в городе при http запросе
     """
-    timezone = datetime.timezone(datetime.timedelta(seconds=float(timedelta_seconds)))
+    timezone = datetime.timezone(datetime.timedelta(seconds=float(offset_from_utc)))
     return datetime.datetime.fromtimestamp(float(request_time), timezone)
