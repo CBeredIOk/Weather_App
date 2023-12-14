@@ -1,4 +1,6 @@
+from typing import Protocol
 
+import ipinfo
 import geocoder
 import requests
 from http import HTTPStatus
@@ -9,9 +11,10 @@ from .app_errors import (ApiRequestError, MissCityError, LostConnectionError)
 
 from services.files import settings, interface_text
 from ..app_classes.weather_info import WeatherInformation
+from ..storages.contracts import Storage
 
 
-def print_weather_data_in_my_location() -> None:
+def print_weather_data_in_my_location(storage: Storage) -> None:
     """
     Эта функция получает название города в местоположении пользователя и отправляет в функцию API запроса.
 
@@ -19,13 +22,13 @@ def print_weather_data_in_my_location() -> None:
         None
     """
     city_name = get_current_city()
-    weather_data = get_weather(city_name)
+    weather_data = get_weather(city_name, storage)
     if weather_data is not None:
         print(weather_data)
 
 
 @error_handler
-def print_weather_data_in_city() -> None:
+def print_weather_data_in_city(storage: Storage) -> None:
     """
     Эта функция получает название города от пользователя и отправляет в функцию API запроса.
 
@@ -33,13 +36,13 @@ def print_weather_data_in_city() -> None:
         None
     """
     city_name = input(interface_text.ENTER_CITY).strip()
-    weather_data = get_weather(city_name)
+    weather_data = get_weather(city_name, storage)
     if weather_data is not None:
         print(weather_data)
 
 
-@error_handler
-def get_weather(location: str) -> WeatherInformation:
+# @error_handler
+def get_weather(location: str, storage: Storage) -> WeatherInformation:
     """
     Эта функция отправляет http запрос и отправляет полученную информацию на обработку.
 
@@ -53,7 +56,7 @@ def get_weather(location: str) -> WeatherInformation:
     try:
         response.raise_for_status()
         data = response.json()
-        weather_data = processing_weather_data(data)
+        weather_data = processing_weather_data(data, storage)
         return weather_data
     except requests.exceptions.HTTPError:
         if (
@@ -67,6 +70,7 @@ def get_weather(location: str) -> WeatherInformation:
         raise LostConnectionError
 
 
+@error_handler
 def get_current_city() -> str:
     """
     Эта функция возвращает название города по текущему местоположению пользователя.
@@ -74,4 +78,35 @@ def get_current_city() -> str:
     Returns:
         str: название города
     """
-    return geocoder.ip('me').city
+    searcher = get_searcher('ipinfo')
+    my_city = searcher.get_current_city()
+    return my_city
+
+
+class CurrentCitySearcher(Protocol):
+    def get_current_city(self) -> str:
+        pass
+
+
+class GeocoderSearcher:
+    @staticmethod
+    def get_current_city() -> str:
+        city_name = geocoder.ip('me').city
+        return city_name
+
+
+class IpInfoSearcher:
+    @staticmethod
+    def get_current_city() -> str:
+        handler = ipinfo.getHandler(settings.IPINFO_API_KEY)
+        details = handler.getDetails('')
+        city_name = details.all.get('city')
+        return city_name
+
+
+def get_searcher(name: str) -> CurrentCitySearcher:
+    searcher_by_name = {
+        'geocoder': GeocoderSearcher,
+        'ipinfo': IpInfoSearcher,
+    }
+    return searcher_by_name.get(name)()
