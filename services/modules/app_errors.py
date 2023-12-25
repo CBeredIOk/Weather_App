@@ -32,6 +32,11 @@ class LostConnectionError(Exception):
         super().__init__(interface_text.LostConnectionError_TEXT)
 
 
+class DatabaseException(Exception):
+    def __init__(self):
+        super().__init__(interface_text.LostConnectionError_TEXT)
+
+
 def error_handler(func):
     def wrapper(*args, **kwargs):
         try:
