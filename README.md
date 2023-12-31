@@ -11,6 +11,11 @@
 Скорость ветра: 5 м/c
 ```
 
+### Example of the app working
+An example of the app working is demonstrated in a gif animation:
+
+![Example of app work](assets/example_of_app_work.gif)
+
 ### Реализация приложения
 1. Для разработки приложения используется язык программирования Python
 2. Данные о погоде берутся через API OpenWeatherMap с использованием библиотеки Requests, отправляя запросы API о погоде в конкретном городе
