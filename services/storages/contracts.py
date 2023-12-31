@@ -1,6 +1,6 @@
 from typing import Protocol
 
-from services.app_classes.weather_info import WeatherInformation
+from services.modules.weather_info import WeatherInformation
 
 
 class Storage(Protocol):

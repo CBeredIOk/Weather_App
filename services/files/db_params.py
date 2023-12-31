@@ -1,5 +1,5 @@
 
-NAME_DATABASE = 'weather_app_data.db'
+NAME_DATABASE = 'services/files/weather_app_data.db'
 NAME_TABLE = 'weather_request_data'
 
 CREATE_DATABASE_REQUEST = '''

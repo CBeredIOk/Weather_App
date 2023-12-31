@@ -4,10 +4,10 @@ import json
 import datetime
 from typing import Any
 
-from ..app_classes.weather_info import WeatherInformation
-from ..modules.app_errors import error_handler
-from ..modules.action_with_json import read_all_data_from_storage
-from ..modules.app_errors import OpenStorageError, SaveStorageError
+from services.modules.weather_info import WeatherInformation
+from services.modules.app_errors import error_handler
+from services.storages.action_with_json import read_all_data_from_storage
+from services.modules.app_errors import OpenStorageError, SaveStorageError
 
 from services.files import settings
 from services.storages.contracts import Storage

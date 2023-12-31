@@ -1,8 +1,8 @@
 import datetime
 import sqlite3
 
-from services.app_classes.weather_info import WeatherInformation
-from services.files.db_settings import (
+from services.modules.weather_info import WeatherInformation
+from services.files.db_params import (
     SELECT_N_LAST_REQUEST, NAME_TABLE, INSERT_REQUEST_INTO_TABLE,
     DELETE_FROM_REQUEST, CREATE_DATABASE_REQUEST, NAME_DATABASE, REFRESH_ID
 )
