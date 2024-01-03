@@ -11,8 +11,7 @@
 Скорость ветра: 5 м/c
 ```
 
-### Example of the app working
-An example of the app working is demonstrated in a gif animation:
+### Пример работы приложения
 
 ![Example of app work](assets/example_of_app_work.gif)
 
