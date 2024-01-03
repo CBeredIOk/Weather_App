@@ -1,32 +1,40 @@
-from http import HTTPStatus
 
 import requests
 
+from http import HTTPStatus
+
 from services.files import settings
-from services.modules.app_errors import MissCityError, ApiRequestError, LostConnectionError
 from services.weather_searchers.contracts import WeatherSearcher
+from services.modules.app_errors import MissCityError, ApiRequestError, LostConnectionError
 
 
 class OpenWeatherAPISearcher(WeatherSearcher):
     @staticmethod
-    def raising_http_errors(status_code) -> None:
-        if (
-                status_code == HTTPStatus.NOT_FOUND or
-                status_code == HTTPStatus.BAD_REQUEST
-        ):
+    def raising_http_errors(status_code: int) -> None:
+        """
+        Проверяет код состояния HTTP и возбуждает соответствующие ошибки.
+
+        Args:
+            status_code (int): Код состояния HTTP.
+        Returns:
+            None
+        """
+
+        if status_code == HTTPStatus.NOT_FOUND or status_code == HTTPStatus.BAD_REQUEST:
             raise MissCityError
         elif status_code == HTTPStatus.INTERNAL_SERVER_ERROR:
             raise ApiRequestError
 
     def get_weather(self, location: str) -> dict[str: str]:
         """
-        Эта функция отправляет http запрос и отправляет полученную информацию на обработку.
+        Отправляет HTTP-запрос для получения информации о погоде по указанному местоположению.
 
         Args:
-            (location: str): Название города, по которому будет отправлен http запрос.
+            location (str): Название города, по которому будет отправлен HTTP-запрос.
         Returns:
-            WeatherInformation: преобразованная информация о погоде в виде класса
+            dict[str, str]: Информация о погоде в виде словаря.
         """
+
         api_url = settings.API_GET_REQUEST_CITY_WEATHER.format(location=location, api_key=settings.API_KEY)
         response = requests.get(api_url)
         try:

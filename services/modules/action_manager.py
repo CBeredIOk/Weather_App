@@ -1,18 +1,30 @@
 
 from services.actions.contracts import Action
+from services.modules.action_menu import MenuAction
+
+from services.actions.get_weather_in_my_location import GetWeatherInMyLocationAction
+from services.actions.get_weather_in_city import GetWeatherInCityAction
+from services.actions.get_history_action import GetHistoryAction
 from services.actions.delete_history_action import DeleteHistoryAction
 from services.actions.exit_action import ExitAction
-from services.actions.get_history_action import GetHistoryAction
-from services.actions.get_weather_in_city import GetWeatherInCityAction
-from services.actions.get_weather_in_my_location import GetWeatherInMyLocationAction
-from services.modules.action_menu import MenuAction
-from services.current_city_searchers.contracts import CurrentCitySearcher
-from services.parsers.contracts import Parser
-from services.storages.contracts import Storage
+
 from services.weather_searchers.contracts import WeatherSearcher
+from services.current_city_searchers.contracts import CurrentCitySearcher
+from services.storages.contracts import Storage
+from services.parsers.contracts import Parser
 
 
 class ActionManager:
+    """
+    Класс ActionManager управляет выполнением действий в зависимости от выбора пользователя в меню.
+
+    Args:
+        weather_searcher (WeatherSearcher): Объект для поиска погоды.
+        current_city_searcher (CurrentCitySearcher): Объект для поиска текущего города.
+        storage (Storage): Объект для хранения данных.
+        parser (Parser): Объект для парсинга информации.
+    """
+
     def __init__(
             self,
             weather_searcher: WeatherSearcher,
@@ -27,7 +39,14 @@ class ActionManager:
 
         self.COMMAND_DISPATCH = self.initialize_commands()
 
-    def initialize_commands(self) -> dict[MenuAction: Action]:
+    def initialize_commands(self) -> dict[MenuAction, Action]:
+        """
+        Инициализирует команды (действия) и их соответствие определенным типам меню.
+
+        Returns:
+            dict[MenuAction, Action]: Словарь, сопоставляющий типы меню с соответствующими действиями.
+        """
+
         command_dispatch = {
             MenuAction.WEATHER_IN_MY_LOCATION: GetWeatherInMyLocationAction(
                 self.weather_searcher,
@@ -52,5 +71,6 @@ class ActionManager:
         Returns:
             None
         """
+
         action = self.COMMAND_DISPATCH.get(action_type)
         action.run()

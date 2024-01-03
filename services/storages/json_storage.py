@@ -2,27 +2,61 @@
 import os
 import json
 import datetime
-from typing import Any
 
-from services.modules.weather_info import WeatherInformation
-from services.modules.app_errors import error_handler
-from services.storages.action_with_json import read_all_data_from_storage
-from services.modules.app_errors import OpenStorageError, SaveStorageError
+from typing import Any
 
 from services.files import settings
 from services.storages.contracts import Storage
+from services.modules.weather_info import WeatherInformation
+from services.modules.app_errors import error_handler, OpenStorageError, SaveStorageError
 
 
 class JsonStorage(Storage):
+    """
+        Класс JsonStorage реализует хранение данных о погоде в формате JSON.
+
+        Этот класс позволяет сохранять информацию о погоде в файл JSON, читать сохраненные данные,
+        удалять историю запросов погоды и получать последние запросы погоды.
+
+        Attributes:
+            file_path (str): Путь к файлу JSON.
+    """
+
+    def __init__(self):
+        self.file_path = self.find_storage_path()
+
+    def __enter__(self):
+        self.file = open(self.file_path, 'r+')
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        if self.file:
+            self.file.close()
+
+    @staticmethod
+    def find_storage_path() -> str:
+        """
+            Находит путь к файлу json.
+
+            Returns:
+                str: Путь к файлу в виде строки.
+        """
+        current_dir = os.path.dirname(__file__)
+        parent_dir = os.path.dirname(current_dir)
+
+        json_file_path = os.path.join(parent_dir, settings.STORAGE_FOLDER, settings.STORAGE_FILE_NAME)
+        return json_file_path
+
     def save_data_weather(self, weather_data: WeatherInformation) -> None:
         """
-        Эта функция сохраняет информацию о погоде в json файл из принимаемого объекта с информацией о погоде.
+            Сохраняет информацию о погоде в файл.
 
-        Args:
-            (weather_data_to_history: dict): объект с информацией о погоде.
-        Returns:
-            None
+            Args:
+                weather_data (WeatherInformation): Информация о погоде для сохранения.
+            Returns:
+                None
         """
+
         existing_data = self.read_all_data_from_json()
         weather_data_to_history = weather_data.to_dict()
         existing_data[str(len(existing_data) + 1)] = weather_data_to_history
@@ -31,44 +65,65 @@ class JsonStorage(Storage):
     @error_handler
     def write_new_data_to_json(self, data: dict[str, Any]) -> None:
         """
-        Эта функция записывает новую информацию в файл json.
+            Записывает новые данные в JSON-файл.
 
-        Args:
-            (data: dict[str, Any]): словарь с новой информацией для записи.
-        Returns:
-            None
+            Args:
+                data (dict[str, Any]): Данные для записи в файл.
+            Returns:
+                None
         """
+
         try:
-            with open(self.find_storage_path(), 'w+') as json_file:
-                json.dump(data, json_file, indent=4, default=self.datetime_serializer)
-        except FileNotFoundError:
+            self.file.seek(0)
+            json.dump(data, self.file, indent=4, default=self.datetime_serializer)
+            self.file.truncate()
+        except (TypeError, ValueError):
             raise SaveStorageError
 
     def get_last_n_request(self, n: int) -> dict[int, WeatherInformation]:
-        all_weather_data = read_all_data_from_storage()
+        """
+            Возвращает последние n запросов погоды.
+
+            Args:
+                n (int): Количество последних запросов погоды для получения.
+            Returns:
+                dict[int, WeatherInformation]: Словарь с последними запросами погоды.
+        """
+
+        all_weather_data = self.read_all_data_from_json()
         number_of_records = len(all_weather_data)
         if n < number_of_records:
-            return self.n_last_request(n, all_weather_data)
+            return self.get_last_n_request_from_storage(n, all_weather_data)
         else:
-            return self.n_last_request(number_of_records, all_weather_data)
+            return self.get_last_n_request_from_storage(number_of_records, all_weather_data)
 
     @error_handler
     def read_all_data_from_json(self) -> Any:
         """
-        Эта функция считывает всю историю запросов с файла json.
+            Читает все данные из JSON-файла.
 
-        Returns:
-            Any: возвращает информацию с json файла
+            Returns:
+                Any: Прочитанные данные из файла.
         """
+
         try:
-            with open(self.find_storage_path(), 'r+') as json_file:
-                data = json.load(json_file)
+            self.file.seek(0)
+            data = json.load(self.file)
             return data
-        except FileNotFoundError:
+        except json.JSONDecodeError:
             raise OpenStorageError
 
     @staticmethod
     def formoting_data_from_dict(weather_data: dict[str, Any]) -> WeatherInformation:
+        """
+            Формирует объект WeatherInformation из словаря данных о погоде.
+
+            Args:
+                weather_data (dict[str, Any]): Данные о погоде в виде словаря.
+            Returns:
+                WeatherInformation: Объект с информацией о погоде.
+        """
+
         date_time = weather_data['date']
         date_time_obj = datetime.datetime.fromisoformat(date_time)
 
@@ -82,16 +137,20 @@ class JsonStorage(Storage):
         )
         return weather_info
 
-    def n_last_request(self, n: int, all_weather_data: dict[str, Any]) -> dict[int, WeatherInformation]:
+    def get_last_n_request_from_storage(
+            self, n: int,
+            all_weather_data: dict[str, Any]
+    ) -> dict[int, WeatherInformation]:
         """
-        Эта функция выводит информацию последних n запросов.
+            Возвращает последние n запросов погоды из общих данных.
 
-        Args:
-            (count_of_records: int): Число последних записей для вывода.
-            (all_weather_data: Any): История записей
-        Returns:
-            None
+            Args:
+                n (int): Количество последних запросов погоды для получения.
+                all_weather_data (dict[str, Any]): Все данные о погоде.
+            Returns:
+                dict[int, WeatherInformation]: Словарь с последними запросами погоды.
         """
+
         number_of_records = len(all_weather_data)
         n_last_data = {}
         for number_of_record in range(number_of_records, number_of_records - n, -1):
@@ -101,40 +160,26 @@ class JsonStorage(Storage):
 
     def delete_request_history(self) -> None:
         """
-        Эта функция позволяет очищать файл с историей запросов.
+            Удаляет историю запросов погоды.
 
-        Returns:
-            None
+            Returns:
+                None
         """
+
         empty_dictionary = {}
         self.write_new_data_to_json(empty_dictionary)
 
     @staticmethod
-    def find_storage_path() -> str:
-        """
-        Эта функция находит путь к файлу json.
-
-        Функция поиска поднимается до Weather_App и потом переходит в папку хранения STORAGE_FOLDER
-
-        Returns:
-            str: возвращает путь в виде строки
-        """
-        current_dir = os.path.dirname(__file__)
-        parent_dir = os.path.dirname(current_dir)
-
-        json_file_path = os.path.join(parent_dir, settings.STORAGE_FOLDER, settings.STORAGE_FILE_NAME)
-        return json_file_path
-
-    @staticmethod
     def datetime_serializer(date: datetime.datetime) -> str:
         """
-        Сериализует объект datetime.datetime в строку с заданным форматом.
+            Сериализует объект даты и времени в строку.
 
-        Args:
-            date (datetime.datetime): Объект datetime.datetime для сериализации.
-        Returns:
-            str: Строка, представляющая дату и время в указанном формате.
+            Args:
+                date (datetime.datetime): Объект даты и времени.
+            Returns:
+                str: Сериализованная строка с датой и временем.
         """
+
         if isinstance(date, datetime.datetime):
             return date.strftime(settings.DATA_TYPE_PRINT)
         raise TypeError

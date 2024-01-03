@@ -55,4 +55,5 @@ class WeatherInformation:
         Returns:
             dict[str, Any]: словарь, содержащий информацию о погоде.
         """
+
         return dataclasses.asdict(self)
