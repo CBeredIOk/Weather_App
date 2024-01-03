@@ -1,18 +1,1 @@
-{
-    "1": {
-        "date": "2024-01-03 19:39:16",
-        "city_name": "\u0412\u0435\u043b\u0438\u043a\u0438\u0439 \u041d\u043e\u0432\u0433\u043e\u0440\u043e\u0434",
-        "weather_conditions": "\u044f\u0441\u043d\u043e",
-        "temperature": -23,
-        "temperature_feels_like": -30,
-        "wind_speed": 3
-    },
-    "2": {
-        "date": "2024-01-03 19:39:16",
-        "city_name": "\u0412\u0435\u043b\u0438\u043a\u0438\u0439 \u041d\u043e\u0432\u0433\u043e\u0440\u043e\u0434",
-        "weather_conditions": "\u044f\u0441\u043d\u043e",
-        "temperature": -23,
-        "temperature_feels_like": -30,
-        "wind_speed": 3
-    }
-}
+{}
