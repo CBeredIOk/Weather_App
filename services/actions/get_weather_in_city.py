@@ -1,5 +1,6 @@
 
 from services.files import interface_text
+from services.modules.app_errors import error_handler
 
 from services.actions.contracts import Action
 
@@ -28,6 +29,7 @@ class GetWeatherInCityAction(Action):
         self.storage = storage
         self.parser = parser
 
+    @error_handler
     def run(self) -> None:
         """
             Запускает выполнение действия - получение и сохранение данных о погоде в указанном городе.

@@ -5,7 +5,7 @@ from http import HTTPStatus
 
 from services.files import settings
 from services.weather_searchers.contracts import WeatherSearcher
-from services.modules.app_errors import MissCityError, ApiRequestError, LostConnectionError
+from services.modules.app_errors import MissCityError, ApiRequestError, LostConnectionError, error_handler
 
 
 class OpenWeatherAPISearcher(WeatherSearcher):
@@ -25,6 +25,7 @@ class OpenWeatherAPISearcher(WeatherSearcher):
         elif status_code == HTTPStatus.INTERNAL_SERVER_ERROR:
             raise ApiRequestError
 
+    @error_handler
     def get_weather(self, location: str) -> dict[str: str]:
         """
         Отправляет HTTP-запрос для получения информации о погоде по указанному местоположению.

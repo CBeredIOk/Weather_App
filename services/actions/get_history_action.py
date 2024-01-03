@@ -73,7 +73,7 @@ class GetHistoryAction(Action):
         """
 
         self.count_records_for_print = int(input(interface_text.NUMBER_OF_REQUEST).strip())
-        if self.count_records_for_print < 0:
+        if self.count_records_for_print <= 0:
             raise ValueError
         else:
             self.weather_data_request = self.storage.get_last_n_request(self.count_records_for_print)
