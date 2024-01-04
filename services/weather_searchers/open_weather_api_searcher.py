@@ -26,7 +26,7 @@ class OpenWeatherAPISearcher(WeatherSearcher):
             raise ApiRequestError
 
     @error_handler
-    def get_weather(self, location: str) -> dict[str: str]:
+    def get_weather(self, location: str) -> dict[str, str]:
         """
         Отправляет HTTP-запрос для получения информации о погоде по указанному местоположению.
 
