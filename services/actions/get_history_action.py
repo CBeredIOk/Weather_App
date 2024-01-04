@@ -58,9 +58,10 @@ class GetHistoryAction(Action):
         """
 
         self.number_of_last_record = next(iter(self.weather_data_request))
-        if len(self.weather_data_request) == self.count_records_for_print:
+        total_count = len(self.weather_data_request)
+        if total_count == self.count_records_for_print:
             self.print_n_request()
-        elif len(self.weather_data_request) < self.count_records_for_print:
+        elif total_count < self.count_records_for_print:
             print(interface_text.PRINTED_ALL_REQUESTS + str(self.number_of_last_record))
             self.print_all_request()
 
