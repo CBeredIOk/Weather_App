@@ -1,30 +1,12 @@
 
 import requests
 
-from http import HTTPStatus
-
 from services.files import settings
 from services.weather_searchers.contracts import WeatherSearcher
-from services.modules.app_errors import MissCityError, ApiRequestError, LostConnectionError, error_handler
+from services.modules.raising_errors import LostConnectionError, error_handler, raising_http_errors
 
 
 class OpenWeatherAPISearcher(WeatherSearcher):
-    @staticmethod
-    def raising_http_errors(status_code: int) -> None:
-        """
-        Проверяет код состояния HTTP и возбуждает соответствующие ошибки.
-
-        Args:
-            status_code (int): Код состояния HTTP.
-        Returns:
-            None
-        """
-
-        if status_code == HTTPStatus.NOT_FOUND or status_code == HTTPStatus.BAD_REQUEST:
-            raise MissCityError
-        elif status_code == HTTPStatus.INTERNAL_SERVER_ERROR:
-            raise ApiRequestError
-
     @error_handler
     def get_weather(self, location: str) -> dict[str, str]:
         """
@@ -43,6 +25,6 @@ class OpenWeatherAPISearcher(WeatherSearcher):
             data = response.json()
             return data
         except requests.exceptions.HTTPError:
-            self.raising_http_errors(response.status_code)
+            raising_http_errors(response.status_code)
         except requests.exceptions.ConnectionError:
             raise LostConnectionError

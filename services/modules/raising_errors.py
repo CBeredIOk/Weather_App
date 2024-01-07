@@ -1,45 +1,35 @@
+from http import HTTPStatus
 
 from services.files import interface_text
+from services.modules.custom_errors import (
+    LostConnectionError,
+    SaveStorageError,
+    OpenStorageError,
+    ApiRequestError,
+    MissCityError,
+    GeocoderError,
+)
 
 
-class ApiRequestError(Exception):
-    def __init__(self):
-        super().__init__(interface_text.ApiRequestError_TEXT)
+def raising_http_errors(status_code: int) -> None:
+    """
+    Проверяет код состояния HTTP и возбуждает соответствующие ошибки.
 
+    Args:
+        status_code (int): Код состояния HTTP.
+    Returns:
+        None
+    """
 
-class MissCityError(Exception):
-    def __init__(self):
-        super().__init__(interface_text.MissCityError_TEXT)
-
-
-class SaveStorageError(Exception):
-    def __init__(self):
-        super().__init__(interface_text.SaveStorageError_TEXT)
-
-
-class OpenStorageError(Exception):
-    def __init__(self):
-        super().__init__(interface_text.OpenStorageError_TEXT)
-
-
-class GeocoderError(Exception):
-    def __init__(self):
-        super().__init__(interface_text.GeocoderError_TEXT)
-
-
-class LostConnectionError(Exception):
-    def __init__(self):
-        super().__init__(interface_text.LostConnectionError_TEXT)
-
-
-class DatabaseException(Exception):
-    def __init__(self):
-        super().__init__(interface_text.DatabaseException_TEXT)
+    if status_code == HTTPStatus.NOT_FOUND or status_code == HTTPStatus.BAD_REQUEST:
+        raise MissCityError
+    elif status_code == HTTPStatus.INTERNAL_SERVER_ERROR:
+        raise ApiRequestError
 
 
 def print_error_message(error_message: str) -> None:
     """
-        Выводит сообщение об ошибке в красном цвете в консоли.
+        Выводит сообщение об ошибке в консоли в красном цвете.
 
         Args:
             error_message (str): Сообщение об ошибке для вывода в консоли.

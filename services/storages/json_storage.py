@@ -1,14 +1,15 @@
 
 import os
 import json
-import datetime
 
 from typing import Any
 
 from services.files import settings
+from services.modules.datetime_processing import datetime_serializing
+from services.parsers.standard_parser import StandardParser
 from services.storages.contracts import Storage
 from services.modules.weather_info import WeatherInformation
-from services.modules.app_errors import error_handler, OpenStorageError, SaveStorageError
+from services.modules.raising_errors import error_handler, OpenStorageError, SaveStorageError
 
 
 class JsonStorage(Storage):
@@ -75,7 +76,7 @@ class JsonStorage(Storage):
 
         try:
             self.file.seek(0)
-            json.dump(data, self.file, indent=4, default=self.datetime_serializer)
+            json.dump(data, self.file, indent=4, default=datetime_serializing)
             self.file.truncate()
         except (TypeError, ValueError):
             raise SaveStorageError
@@ -113,30 +114,6 @@ class JsonStorage(Storage):
         except json.JSONDecodeError:
             raise OpenStorageError
 
-    @staticmethod
-    def formoting_data_from_dict(weather_data: dict[str, Any]) -> WeatherInformation:
-        """
-            Формирует объект WeatherInformation из словаря данных о погоде.
-
-            Args:
-                weather_data (dict[str, Any]): Данные о погоде в виде словаря.
-            Returns:
-                WeatherInformation: Объект с информацией о погоде.
-        """
-
-        date_time = weather_data['date']
-        date_time_obj = datetime.datetime.fromisoformat(date_time)
-
-        weather_info = WeatherInformation(
-            date=date_time_obj,
-            city_name=weather_data['city_name'],
-            weather_conditions=weather_data['weather_conditions'],
-            temperature=int(weather_data['temperature']),
-            temperature_feels_like=int(weather_data['temperature_feels_like']),
-            wind_speed=int(weather_data['wind_speed'])
-        )
-        return weather_info
-
     def get_last_n_request_from_storage(
             self, n: int,
             all_weather_data: dict[str, Any]
@@ -154,8 +131,9 @@ class JsonStorage(Storage):
         number_of_records = len(all_weather_data)
         n_last_data = {}
         for number_of_record in range(number_of_records, number_of_records - n, -1):
-            weather_data = self.formoting_data_from_dict(all_weather_data[str(number_of_record)])
-            n_last_data[int(number_of_record)] = weather_data
+            weather_data = all_weather_data[str(number_of_record)]
+            formatted_weather_data = StandardParser.formoting_data_from_dict(weather_data)
+            n_last_data[number_of_record] = formatted_weather_data
         return n_last_data
 
     def delete_request_history(self) -> None:
@@ -168,18 +146,3 @@ class JsonStorage(Storage):
 
         empty_dictionary = {}
         self.write_new_data_to_json(empty_dictionary)
-
-    @staticmethod
-    def datetime_serializer(date: datetime.datetime) -> str:
-        """
-            Сериализует объект даты и времени в строку.
-
-            Args:
-                date (datetime.datetime): Объект даты и времени.
-            Returns:
-                str: Сериализованная строка с датой и временем.
-        """
-
-        if isinstance(date, datetime.datetime):
-            return date.strftime(settings.DATA_TYPE_PRINT)
-        raise TypeError

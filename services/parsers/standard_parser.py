@@ -3,6 +3,7 @@ import datetime
 
 from typing import Any
 
+from services.modules.datetime_processing import make_datetime_object
 from services.modules.weather_info import WeatherInformation
 
 
@@ -13,21 +14,7 @@ class StandardParser:
     """
 
     @staticmethod
-    def make_datetime_object(request_time: str, offset_from_utc: str) -> datetime.datetime:
-        """
-            Эта функция переводит время из timestep в формат datetime и показывает разницу по UTC
-
-            Args:
-                (request_time: str): время в городе при запросе
-                (offset_from_utc: str): показывает разницу времени в городе от utc
-            Returns:
-                datetime: дата и время в городе при http запросе
-        """
-
-        timezone = datetime.timezone(datetime.timedelta(seconds=float(offset_from_utc)))
-        return datetime.datetime.fromtimestamp(float(request_time), timezone)
-
-    def parsing_weather_data(self, weather_data: dict[str, Any]) -> WeatherInformation:
+    def parsing_weather_data(weather_data: dict[str, Any]) -> WeatherInformation:
         """
             Эта функция парсит данные и переводит их в нужный формат
 
@@ -36,8 +23,9 @@ class StandardParser:
             Returns:
                 WeatherInformation: преобразованная информация о погоде в виде класса
         """
-
-        date_request = self.make_datetime_object(weather_data["dt"], weather_data["timezone"])
+        request_time = weather_data['dt']
+        offset_from_utc = weather_data['timezone']
+        date_request = make_datetime_object(request_time, offset_from_utc)
         weather_parsing_data = {
             'date': date_request,
             'city_name': weather_data['name'],
@@ -48,3 +36,27 @@ class StandardParser:
         }
         weather_information = WeatherInformation(**weather_parsing_data)
         return weather_information
+
+    @staticmethod
+    def formoting_data_from_dict(weather_data: dict[str, Any]) -> WeatherInformation:
+        """
+            Формирует объект WeatherInformation из словаря данных о погоде.
+
+            Args:
+                weather_data (dict[str, Any]): Данные о погоде в виде словаря.
+            Returns:
+                WeatherInformation: Объект с информацией о погоде.
+        """
+
+        date_time = weather_data['date']
+        date_time_obj = datetime.datetime.fromisoformat(date_time)
+
+        weather_info = WeatherInformation(
+            date=date_time_obj,
+            city_name=weather_data['city_name'],
+            weather_conditions=weather_data['weather_conditions'],
+            temperature=int(weather_data['temperature']),
+            temperature_feels_like=int(weather_data['temperature_feels_like']),
+            wind_speed=int(weather_data['wind_speed'])
+        )
+        return weather_info
