@@ -4,7 +4,7 @@ import sqlite3
 
 from services.modules.weather_info import WeatherInformation
 from services.storages.contracts import Storage
-from services.modules.app_errors import DatabaseException
+from services.modules.custom_errors import DatabaseException
 
 from services.files.db_params import (
     SELECT_N_LAST_REQUEST, NAME_TABLE, INSERT_REQUEST_INTO_TABLE,

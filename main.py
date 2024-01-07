@@ -1,5 +1,5 @@
 
-from services.modules.app_errors import main_menu_error_handler
+from services.modules.raising_errors import main_menu_error_handler
 
 from services.weather_searchers.contracts import WeatherSearcher
 from services.weather_searchers.open_weather_api_searcher import OpenWeatherAPISearcher
