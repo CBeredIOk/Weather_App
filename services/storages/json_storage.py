@@ -24,6 +24,7 @@ class JsonStorage(Storage):
     """
 
     def __init__(self):
+        self.parser = StandardParser
         self.file_path = self.find_storage_path()
 
     def __enter__(self):
@@ -94,9 +95,9 @@ class JsonStorage(Storage):
         all_weather_data = self.read_all_data_from_json()
         number_of_records = len(all_weather_data)
         if n < number_of_records:
-            return self.get_last_n_request_from_storage(n, all_weather_data)
+            return self.get_last_n_request_from_json(n, all_weather_data)
         else:
-            return self.get_last_n_request_from_storage(number_of_records, all_weather_data)
+            return self.get_last_n_request_from_json(number_of_records, all_weather_data)
 
     @error_handler
     def read_all_data_from_json(self) -> Any:
@@ -114,7 +115,7 @@ class JsonStorage(Storage):
         except json.JSONDecodeError:
             raise OpenStorageError
 
-    def get_last_n_request_from_storage(
+    def get_last_n_request_from_json(
             self, n: int,
             all_weather_data: dict[str, Any]
     ) -> dict[int, WeatherInformation]:
@@ -132,7 +133,7 @@ class JsonStorage(Storage):
         n_last_data = {}
         for number_of_record in range(number_of_records, number_of_records - n, -1):
             weather_data = all_weather_data[str(number_of_record)]
-            formatted_weather_data = StandardParser.formoting_data_from_dict(weather_data)
+            formatted_weather_data = self.parser.formoting_data_from_dict(weather_data)
             n_last_data[number_of_record] = formatted_weather_data
         return n_last_data
 
