@@ -2,6 +2,8 @@
 from services.files import interface_text
 
 from services.actions.contracts import Action
+from services.modules.custom_errors import EmptyStorageError
+from services.modules.raising_errors import error_handler
 
 from services.storages.contracts import Storage
 
@@ -49,6 +51,7 @@ class GetHistoryAction(Action):
             weather_data = self.weather_data_request[number_of_record]
             print(weather_data)
 
+    @error_handler
     def print_request_history(self) -> None:
         """
             Определяет, какую историю запросов следует вывести.
@@ -56,14 +59,16 @@ class GetHistoryAction(Action):
             Returns:
                 None
         """
-
-        self.number_of_last_record = next(iter(self.weather_data_request))
-        total_count = len(self.weather_data_request)
-        if total_count == self.count_records_for_print:
-            self.print_n_request()
-        elif total_count < self.count_records_for_print:
-            print(interface_text.PRINTED_ALL_REQUESTS + str(self.number_of_last_record))
-            self.print_all_request()
+        try:
+            self.number_of_last_record = next(iter(self.weather_data_request))
+            total_count = len(self.weather_data_request)
+            if total_count == self.count_records_for_print:
+                self.print_n_request()
+            elif total_count < self.count_records_for_print:
+                print(interface_text.PRINTED_ALL_REQUESTS + str(self.number_of_last_record))
+                self.print_all_request()
+        except StopIteration:
+            raise EmptyStorageError
 
     def run(self) -> None:
         """

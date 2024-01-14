@@ -8,10 +8,10 @@ from services.storages.contracts import Storage
 
 class DeleteHistoryAction(Action):
     """
-    Класс DeleteHistoryAction реализует действие удаления истории запросов о погоде.
+        Класс DeleteHistoryAction реализует действие удаления истории запросов о погоде.
 
-    Args:
-        storage (Storage): Объект для доступа к сохраненным данным о погоде.
+        Args:
+            storage (Storage): Объект для доступа к сохраненным данным о погоде.
     """
 
     def __init__(self, storage: Storage):

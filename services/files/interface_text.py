@@ -40,4 +40,6 @@ TypeMenuError_TEXT = '\nНекорректный ввод, попробуйте 
 LostConnectionError_TEXT = '\nОшибка соединения, попробуйте позже '
 ExceptionError_TEXT = '\nНеизвестная ошибка, попробуйте позже '
 TimeOutError_TEXT = '\nПревышено время ожидания от сервера, попробуйте позже '
-DatabaseException_TEXT = '\nУ нас пролемы в работе с базами данных. Уже решаем их!'
+DatabaseException_TEXT = '\nУ нас пролемы в работе с базами данных. Уже решаем их! '
+NoStorageImplError_TEXT = '\nДанный тип хранилища не реализован в приложении '
+EmptyStorageError_TEXT = '\nХранилище записей пустое '

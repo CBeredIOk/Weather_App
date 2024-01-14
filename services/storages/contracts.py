@@ -4,6 +4,9 @@ from services.modules.weather_info import WeatherInformation
 
 
 class Storage(Protocol):
+    JsonStorage = 'JsonStorage'
+    SQLiteStorage = 'SQLiteStorage'
+
     def save_data_weather(self, weather_info: WeatherInformation) -> None:
         raise NotImplementedError
 

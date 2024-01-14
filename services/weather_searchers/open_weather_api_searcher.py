@@ -10,12 +10,12 @@ class OpenWeatherAPISearcher(WeatherSearcher):
     @error_handler
     def get_weather(self, location: str) -> dict[str, str]:
         """
-        Отправляет HTTP-запрос для получения информации о погоде по указанному местоположению.
+            Отправляет HTTP-запрос для получения информации о погоде по указанному местоположению.
 
-        Args:
-            location (str): Название города, по которому будет отправлен HTTP-запрос.
-        Returns:
-            dict[str, str]: Информация о погоде в виде словаря.
+            Args:
+                location (str): Название города, по которому будет отправлен HTTP-запрос.
+            Returns:
+                dict[str, str]: Информация о погоде в виде словаря.
         """
 
         api_url = settings.API_GET_REQUEST_CITY_WEATHER.format(location=location, api_key=settings.API_KEY)

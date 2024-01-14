@@ -12,16 +12,16 @@ from services.parsers.contracts import Parser
 
 class WeatherApp:
     """
-    Класс WeatherApp представляет приложение для отображения погоды.
+        Класс WeatherApp представляет приложение для отображения погоды.
 
-    Этот класс управляет функциональностью приложения, включая поиск погоды,
-    текущего города, хранение данных и парсинг информации.
+        Этот класс управляет функциональностью приложения, включая поиск погоды,
+        текущего города, хранение данных и парсинг информации.
 
-    Args:
-        weather_searcher (WeatherSearcher): Объект для поиска погоды.
-        current_city_searcher (CurrentCitySearcher): Объект для поиска текущего города.
-        storage (Storage): Объект для хранения данных.
-        parser (Parser): Объект для парсинга информации.
+        Args:
+            weather_searcher (WeatherSearcher): Объект для поиска погоды.
+            current_city_searcher (CurrentCitySearcher): Объект для поиска текущего города.
+            storage (Storage): Объект для хранения данных.
+            parser (Parser): Объект для парсинга информации.
     """
 
     def __init__(
@@ -38,10 +38,10 @@ class WeatherApp:
 
     def start(self) -> None:
         """
-        Прокручивает главное меню приложения и запрашивает выбор действия у пользователя.
+            Прокручивает главное меню приложения и запрашивает выбор действия у пользователя.
 
-        Returns:
-            None
+            Returns:
+                None
         """
 
         action_manager = ActionManager(self.weather_searcher, self.current_city_searcher, self.storage, self.parser)

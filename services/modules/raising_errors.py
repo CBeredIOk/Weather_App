@@ -8,6 +8,8 @@ from services.modules.custom_errors import (
     ApiRequestError,
     MissCityError,
     GeocoderError,
+    NoStorageImplError,
+    EmptyStorageError,
 )
 
 
@@ -53,7 +55,7 @@ def error_handler(func):
         except (
             MissCityError, ApiRequestError, GeocoderError,
             SaveStorageError, OpenStorageError, LostConnectionError,
-            TypeError, ValueError
+            EmptyStorageError, TypeError, ValueError,
         ) as error:
             raise error
         else:
@@ -74,6 +76,7 @@ def main_menu_error_handler(func):
             except (
                     MissCityError, ApiRequestError, GeocoderError,
                     SaveStorageError, OpenStorageError, LostConnectionError,
+                    NoStorageImplError, EmptyStorageError,
             ) as error:
                 print_error_message(str(error))
             except ValueError:

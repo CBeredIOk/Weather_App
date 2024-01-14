@@ -40,6 +40,6 @@ class GetWeatherInCityAction(Action):
 
         city_name = input(interface_text.ENTER_CITY).strip()
         weather_data = self.weather_searcher.get_weather(city_name)
-        weather_info = self.parser.parsing_weather_data(weather_data)
+        weather_info = self.parser.parsing_weather_data_from_request(weather_data)
         print(weather_info)
         self.storage.save_data_weather(weather_info)

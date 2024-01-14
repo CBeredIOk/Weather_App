@@ -40,6 +40,6 @@ class GetWeatherInMyLocationAction(Action):
 
         current_city = self.current_city_searcher.get_current_city()
         weather_data = self.weather_searcher.get_weather(current_city)
-        weather_info = self.parser.parsing_weather_data(weather_data)
+        weather_info = self.parser.parsing_weather_data_from_request(weather_data)
         print(weather_info)
         self.storage.save_data_weather(weather_info)

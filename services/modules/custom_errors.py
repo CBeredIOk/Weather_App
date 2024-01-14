@@ -35,3 +35,13 @@ class LostConnectionError(Exception):
 class DatabaseException(Exception):
     def __init__(self):
         super().__init__(interface_text.DatabaseException_TEXT)
+
+
+class NoStorageImplError(Exception):
+    def __init__(self):
+        super().__init__(interface_text.NoStorageImplError_TEXT)
+
+
+class EmptyStorageError(Exception):
+    def __init__(self):
+        super().__init__(interface_text.EmptyStorageError_TEXT)

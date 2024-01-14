@@ -1,12 +1,9 @@
 
-import os
 import json
 
 from typing import Any
 
-from services.files import settings
 from services.modules.datetime_processing import datetime_serializing
-from services.parsers.standard_parser import StandardParser
 from services.storages.contracts import Storage
 from services.modules.weather_info import WeatherInformation
 from services.modules.raising_errors import error_handler, OpenStorageError, SaveStorageError
@@ -23,9 +20,9 @@ class JsonStorage(Storage):
             file_path (str): Путь к файлу JSON.
     """
 
-    def __init__(self):
-        self.parser = StandardParser
-        self.file_path = self.find_storage_path()
+    def __init__(self, **kwargs):
+        self.parser = kwargs.get('parser')
+        self.file_path = kwargs.get('file_name')
 
     def __enter__(self):
         self.file = open(self.file_path, 'r+')
@@ -34,20 +31,6 @@ class JsonStorage(Storage):
     def __exit__(self, exc_type, exc_value, traceback):
         if self.file:
             self.file.close()
-
-    @staticmethod
-    def find_storage_path() -> str:
-        """
-            Находит путь к файлу json.
-
-            Returns:
-                str: Путь к файлу в виде строки.
-        """
-        current_dir = os.path.dirname(__file__)
-        parent_dir = os.path.dirname(current_dir)
-
-        json_file_path = os.path.join(parent_dir, settings.STORAGE_FOLDER, settings.STORAGE_FILE_NAME)
-        return json_file_path
 
     def save_data_weather(self, weather_data: WeatherInformation) -> None:
         """
@@ -58,7 +41,6 @@ class JsonStorage(Storage):
             Returns:
                 None
         """
-
         existing_data = self.read_all_data_from_json()
         weather_data_to_history = weather_data.to_dict()
         existing_data[str(len(existing_data) + 1)] = weather_data_to_history
@@ -120,7 +102,7 @@ class JsonStorage(Storage):
             all_weather_data: dict[str, Any]
     ) -> dict[int, WeatherInformation]:
         """
-            Возвращает последние n запросов погоды из общих данных.
+            Возвращает последние n запросов погоды из файла json.
 
             Args:
                 n (int): Количество последних запросов погоды для получения.
@@ -133,7 +115,7 @@ class JsonStorage(Storage):
         n_last_data = {}
         for number_of_record in range(number_of_records, number_of_records - n, -1):
             weather_data = all_weather_data[str(number_of_record)]
-            formatted_weather_data = self.parser.formoting_data_from_dict(weather_data)
+            formatted_weather_data = self.parser.formoting_data_from_storage(weather_data)
             n_last_data[number_of_record] = formatted_weather_data
         return n_last_data
 

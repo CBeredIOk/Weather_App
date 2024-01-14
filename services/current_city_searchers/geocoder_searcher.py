@@ -4,7 +4,7 @@ import geocoder
 
 class GeocoderSearcher:
     """
-    Класс GeocoderSearcher реализует поиск текущего города с использованием геокодера.
+        Класс GeocoderSearcher реализует поиск текущего города с использованием геокодера.
 
     """
 

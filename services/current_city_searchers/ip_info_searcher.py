@@ -6,7 +6,7 @@ from services.files import settings
 
 class IpInfoSearcher:
     """
-    Класс IpInfoSearcher реализует поиск текущего города с использованием IpInfo.
+        Класс IpInfoSearcher реализует поиск текущего города с использованием IpInfo.
 
     """
 

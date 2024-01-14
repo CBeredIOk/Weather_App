@@ -8,7 +8,7 @@ from services.modules.custom_errors import DatabaseException
 
 from services.files.db_params import (
     SELECT_N_LAST_REQUEST, NAME_TABLE, INSERT_REQUEST_INTO_TABLE,
-    DELETE_FROM_REQUEST, CREATE_DATABASE_REQUEST, NAME_DATABASE, REFRESH_ID
+    DELETE_FROM_REQUEST, CREATE_DATABASE_REQUEST, REFRESH_ID
 )
 
 
@@ -22,8 +22,11 @@ class SQLiteStorage(Storage):
             None
     """
 
-    def __init__(self) -> None:
+    def __init__(self, **kwargs) -> None:
         self.connection = None
+        self.parser = kwargs.get('parser')
+        self.name_database = kwargs.get('file_name')
+        self.name_table = NAME_TABLE
 
     def create_db_weather(self) -> None:
         """
@@ -34,10 +37,10 @@ class SQLiteStorage(Storage):
         """
 
         cursor = self.connection.cursor()
-        cursor.execute(CREATE_DATABASE_REQUEST.format(NAME_TABLE))
+        cursor.execute(CREATE_DATABASE_REQUEST.format(self.name_table))
 
     def __enter__(self):
-        self.connection = sqlite3.connect(NAME_DATABASE)
+        self.connection = sqlite3.connect(self.name_database)
         self.create_db_weather()
         return self
 
@@ -56,11 +59,11 @@ class SQLiteStorage(Storage):
         """
 
         try:
-            query = INSERT_REQUEST_INTO_TABLE.format(NAME_TABLE)
+            query = INSERT_REQUEST_INTO_TABLE.format(self.name_table)
             formatted_date = str(weather_data.date)
-            params = (None, formatted_date, weather_data.city_name, weather_data.weather_conditions,
-                      weather_data.temperature, weather_data.temperature_feels_like, weather_data.wind_speed)
-
+            params = (None, formatted_date, weather_data.city_name,
+                      weather_data.weather_conditions, weather_data.temperature,
+                      weather_data.temperature_feels_like, weather_data.wind_speed)
             cursor = self.connection.cursor()
             cursor.execute(query, params)
             self.connection.commit()
@@ -80,7 +83,7 @@ class SQLiteStorage(Storage):
 
         try:
             cursor = self.connection.cursor()
-            cursor.execute(SELECT_N_LAST_REQUEST.format(NAME_TABLE, count_of_records))
+            cursor.execute(SELECT_N_LAST_REQUEST.format(self.name_table, count_of_records))
             rows = cursor.fetchall()
             weather_data_dict = {}
 
@@ -108,7 +111,7 @@ class SQLiteStorage(Storage):
 
         try:
             cursor = self.connection.cursor()
-            cursor.execute(DELETE_FROM_REQUEST.format(NAME_TABLE,))
+            cursor.execute(DELETE_FROM_REQUEST.format(self.name_table))
             cursor.execute(REFRESH_ID)
             self.connection.commit()
             cursor.close()

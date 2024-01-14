@@ -14,7 +14,7 @@ class StandardParser:
     """
 
     @staticmethod
-    def parsing_weather_data(weather_data: dict[str, Any]) -> WeatherInformation:
+    def parsing_weather_data_from_request(weather_data: dict[str, Any]) -> WeatherInformation:
         """
             Эта функция парсит данные и переводит их в нужный формат
 
@@ -38,7 +38,7 @@ class StandardParser:
         return weather_information
 
     @staticmethod
-    def formoting_data_from_dict(weather_data: dict[str, Any]) -> WeatherInformation:
+    def formoting_data_from_storage(weather_data: dict[str, Any]) -> WeatherInformation:
         """
             Формирует объект WeatherInformation из словаря данных о погоде.
 
@@ -47,10 +47,8 @@ class StandardParser:
             Returns:
                 WeatherInformation: Объект с информацией о погоде.
         """
-
         date_time = weather_data['date']
         date_time_obj = datetime.datetime.fromisoformat(date_time)
-
         weather_info = WeatherInformation(
             date=date_time_obj,
             city_name=weather_data['city_name'],

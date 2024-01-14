@@ -16,13 +16,13 @@ from services.parsers.contracts import Parser
 
 class ActionManager:
     """
-    Класс ActionManager управляет выполнением действий в зависимости от выбора пользователя в меню.
+        Класс ActionManager управляет выполнением действий в зависимости от выбора пользователя в меню.
 
-    Args:
-        weather_searcher (WeatherSearcher): Объект для поиска погоды.
-        current_city_searcher (CurrentCitySearcher): Объект для поиска текущего города.
-        storage (Storage): Объект для хранения данных.
-        parser (Parser): Объект для парсинга информации.
+        Args:
+            weather_searcher (WeatherSearcher): Объект для поиска погоды.
+            current_city_searcher (CurrentCitySearcher): Объект для поиска текущего города.
+            storage (Storage): Объект для хранения данных.
+            parser (Parser): Объект для парсинга информации.
     """
 
     def __init__(
@@ -41,10 +41,10 @@ class ActionManager:
 
     def initialize_commands(self) -> dict[MenuAction, Action]:
         """
-        Инициализирует команды (действия) и их соответствие определенным типам меню.
+            Инициализирует команды (действия) и их соответствие определенным типам меню.
 
-        Returns:
-            dict[MenuAction, Action]: Словарь, сопоставляющий типы меню с соответствующими действиями.
+            Returns:
+                dict[MenuAction, Action]: Словарь, сопоставляющий типы меню с соответствующими действиями.
         """
 
         command_dispatch = {
@@ -63,13 +63,12 @@ class ActionManager:
 
     def execute(self, action_type: MenuAction) -> None:
         """
-        Выполняет действие в соответствии с переданным типом действия из меню.
+            Выполняет действие в соответствии с переданным типом действия из меню.
 
-        Args:
-            action_type (MenuAction): Тип действия из меню для выполнения.
-
-        Returns:
-            None
+            Args:
+                action_type (MenuAction): Тип действия из меню для выполнения.
+            Returns:
+                None
         """
 
         action = self.COMMAND_DISPATCH.get(action_type)
