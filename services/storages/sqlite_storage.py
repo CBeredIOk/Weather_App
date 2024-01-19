@@ -71,6 +71,27 @@ class SQLiteStorage(Storage):
         except Exception:
             raise DatabaseException()
 
+    def processing_requests_data(self, rows: tuple) -> dict[int, WeatherInformation]:
+        """
+            Обрабатывает данные о погоде из кортежа и возвращает словарь с информацией о погоде.
+
+            Args:
+                rows (tuple): Кортеж с данными о погоде, каждая строка содержит информацию о конкретной записи.
+            Returns:
+                dict[int, WeatherInformation]: Словарь, где ключи - это идентификаторы записей,
+                а значения - объекты WeatherInformation с информацией о погоде.
+        """
+
+        weather_data_requests = {}
+        for row in rows:
+            id, str_date, city_name, weather_conditions, temperature, temperature_feels_like, wind_speed = row
+            datetime_date = datetime.datetime.fromisoformat(str_date)
+            weather_info = WeatherInformation(
+                datetime_date, city_name, weather_conditions, temperature, temperature_feels_like, wind_speed
+            )
+            weather_data_requests[id] = weather_info
+        return weather_data_requests
+
     def get_last_n_request(self, count_of_records: int) -> dict[int, WeatherInformation]:
         """
             Получает последние n запросов погоды из базы данных.
@@ -85,19 +106,9 @@ class SQLiteStorage(Storage):
             cursor = self.connection.cursor()
             cursor.execute(SELECT_N_LAST_REQUEST.format(self.name_table, count_of_records))
             rows = cursor.fetchall()
-            weather_data_dict = {}
-
-            for row in rows:
-                id, str_date, city_name, weather_conditions, temperature, temperature_feels_like, wind_speed = row
-                datetime_date = datetime.datetime.fromisoformat(str_date)
-
-                weather_info = WeatherInformation(
-                    datetime_date, city_name, weather_conditions, temperature, temperature_feels_like, wind_speed
-                )
-                weather_data_dict[id] = weather_info
-
+            weather_data_requests = self.processing_requests_data(rows)
             cursor.close()
-            return weather_data_dict
+            return weather_data_requests
         except Exception:
             raise DatabaseException()
 

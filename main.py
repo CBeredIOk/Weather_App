@@ -18,7 +18,7 @@ def main() -> None:
             None
     """
     weather_searcher = Factory.get_weather_searcher('open_weather_api')
-    current_city_searcher = Factory.get_current_city_searcher('geocoder')
+    current_city_searcher = Factory.get_current_city_searcher('ipinfo')
     parser = Factory.get_parser('standard')
 
     with Factory.get_storage(

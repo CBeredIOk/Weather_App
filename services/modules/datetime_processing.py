@@ -29,7 +29,6 @@ def datetime_serializing(date: datetime.datetime) -> str:
     """
 
     if isinstance(date, datetime.datetime):
-        # return date.replace(tzinfo=datetime.timezone.utc).strftime(settings.DATA_TYPE_PRINT)
         return date.strftime(settings.DATA_TYPE_PRINT)
     else:
         raise TypeError

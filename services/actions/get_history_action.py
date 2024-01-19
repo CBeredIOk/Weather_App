@@ -52,9 +52,15 @@ class GetHistoryAction(Action):
             print(weather_data)
 
     @error_handler
-    def print_request_history(self) -> None:
+    def process_weather_data_request(self) -> None:
         """
-            Определяет, какую историю запросов следует вывести.
+            Обрабатывает запрос данных о погоде.
+
+            Проверяет количество полученных записей о погоде и выполняет соответствующие действия:
+            - Если количество записей равно self.count_records_for_print, вызывается метод self.print_n_request().
+            - Если количество записей меньше self.count_records_for_print, выводится сообщение о печати всех запросов
+              и вызывается метод self.print_all_request().
+            - Если нет записей, выбрасывается исключение EmptyStorageError.
 
             Returns:
                 None
@@ -83,4 +89,4 @@ class GetHistoryAction(Action):
             raise ValueError
         else:
             self.weather_data_request = self.storage.get_last_n_request(self.count_records_for_print)
-            self.print_request_history()
+            self.process_weather_data_request()

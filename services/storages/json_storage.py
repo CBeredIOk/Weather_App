@@ -32,20 +32,6 @@ class JsonStorage(Storage):
         if self.file:
             self.file.close()
 
-    def save_data_weather(self, weather_data: WeatherInformation) -> None:
-        """
-            Сохраняет информацию о погоде в файл.
-
-            Args:
-                weather_data (WeatherInformation): Информация о погоде для сохранения.
-            Returns:
-                None
-        """
-        existing_data = self.read_all_data_from_json()
-        weather_data_to_history = weather_data.to_dict()
-        existing_data[str(len(existing_data) + 1)] = weather_data_to_history
-        self.write_new_data_to_json(existing_data)
-
     @error_handler
     def write_new_data_to_json(self, data: dict[str, Any]) -> None:
         """
@@ -64,6 +50,36 @@ class JsonStorage(Storage):
         except (TypeError, ValueError):
             raise SaveStorageError
 
+    @error_handler
+    def read_all_data_from_json(self) -> Any:
+        """
+            Читает все данные из JSON-файла.
+
+            Returns:
+                Any: Прочитанные данные из файла.
+        """
+
+        try:
+            self.file.seek(0)
+            data = json.load(self.file)
+            return data
+        except json.JSONDecodeError:
+            raise OpenStorageError
+
+    def save_data_weather(self, weather_data: WeatherInformation) -> None:
+        """
+            Сохраняет информацию о погоде в файл.
+
+            Args:
+                weather_data (WeatherInformation): Информация о погоде для сохранения.
+            Returns:
+                None
+        """
+        existing_data = self.read_all_data_from_json()
+        weather_data_to_history = weather_data.to_dict()
+        existing_data[str(len(existing_data) + 1)] = weather_data_to_history
+        self.write_new_data_to_json(existing_data)
+
     def get_last_n_request(self, n: int) -> dict[int, WeatherInformation]:
         """
             Возвращает последние n запросов погоды.
@@ -80,22 +96,6 @@ class JsonStorage(Storage):
             return self.get_last_n_request_from_json(n, all_weather_data)
         else:
             return self.get_last_n_request_from_json(number_of_records, all_weather_data)
-
-    @error_handler
-    def read_all_data_from_json(self) -> Any:
-        """
-            Читает все данные из JSON-файла.
-
-            Returns:
-                Any: Прочитанные данные из файла.
-        """
-
-        try:
-            self.file.seek(0)
-            data = json.load(self.file)
-            return data
-        except json.JSONDecodeError:
-            raise OpenStorageError
 
     def get_last_n_request_from_json(
             self, n: int,

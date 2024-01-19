@@ -17,8 +17,7 @@ from services.weather_searchers.open_weather_api_searcher import OpenWeatherAPIS
 
 class Factory:
     """
-        Фабрика для создания объектов различных типов, таких как
-        WeatherSearcher, CurrentCitySearcher, Parser, и Storage.
+        Фабрика для создания объектов различных типов (WeatherSearcher, CurrentCitySearcher, Parser, и Storage).
 
     """
 
