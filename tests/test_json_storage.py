@@ -8,7 +8,6 @@ from services.parsers.standard_parser import StandardParser
 from services.storages.json_storage import JsonStorage
 
 
-# Define test data
 weather_data_test_1 = WeatherInformation(
     date=datetime.datetime.fromisoformat('1111-11-11 11:11:11+11:00'),
     city_name='City_1',
